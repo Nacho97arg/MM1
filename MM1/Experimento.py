@@ -16,13 +16,13 @@ class experimento(object):
         self.cola = []
         self.enCola = [0]
         self.clientePorArribar = None
-        self.clientesProcesados = 0
+        self.clientesProcesados = []
         self.clientesRechazados = 0
 
     def ejecutar(self):
         #Llamadas a rutinas de arribo, partida, etc
         print("Ejecutado")
-        while(self.clientesProcesados<self.clientesAProcesar):
+        while(len(self.clientesProcesados)<self.clientesAProcesar):
             self.pasoTiempo()
     
     def pasoTiempo(self):
@@ -50,7 +50,8 @@ class experimento(object):
     def arribo(self):
         nuevoCliente = Cliente(self.tiempo+random.exponential(scale=self.tasaArribo), random.exponential(scale=self.tasaPartida))
         if self.estadoServidor[self.lineaTemporal.index(self.tiempo)-1]==1: #Si el estado del servidor es ocupado en el tiempo actual
-            if len(self.cola)<=self.tamanioMaxCola:
+            self.estadoServidor.append(1)
+            if len(self.cola)<=self.tamanioMaxCola:  #Agregar append estado servidor
                 self.cola.append(self.clientePorArribar)
                 self.enCola.append(len(self.cola))
             else:
@@ -63,16 +64,17 @@ class experimento(object):
         self.clientePorArribar=nuevoCliente
 
     def partida(self):
-        if len(self.cola) == 0:
+        if len(self.cola) == 0: #Cola vacia, servidor pasa a idle
             self.estadoServidor.append(0)
+            self.clientesProcesados.append(self.clienteSiendoAtendido)
             self.clienteSiendoAtendido=None
-            self.enCola.append(0)
-            self.clientesProcesados+=1
-        else:
+            self.enCola.append(0)            
+        else: #Cola no vacia, pasa proximo cliente en cola
+            self.clientesProcesados.append(self.clienteSiendoAtendido)
             self.clienteSiendoAtendido=self.cola[0]
+            self.clienteSiendoAtendido.set_demoraCola(self.tiempo-self.clienteSiendoAtendido.tiempoArribo)
             self.cola.remove(self.cola[0])
-            self.clientesProcesados+=1
-            self.estadoServidor(1)
+            self.estadoServidor.append(1)
             self.enCola.append(len(self.cola))
 
 

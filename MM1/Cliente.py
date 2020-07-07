@@ -3,7 +3,7 @@ class Cliente(object):
     def __init__(self, tiempoArribo, tiempoPartida):
         self.tiempoArribo=tiempoArribo
         self.tiempoPartida=tiempoArribo+tiempoPartida
-        self.demoraCola=0
+        self.demoraCola=None
 
     def set_tiempoArribo(self, tiempoArribo):
         self.tiempoArribo=tiempoArribo
