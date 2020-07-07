@@ -1,5 +1,5 @@
 class Cliente(object):
-    """description of class"""
+    """Entidad cliente del servidor"""
     def __init__(self, tiempoArribo, tiempoPartida):
         self.tiempoArribo=tiempoArribo
         self.tiempoPartida=tiempoArribo+tiempoPartida

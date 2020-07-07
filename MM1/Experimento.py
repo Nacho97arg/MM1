@@ -1,7 +1,7 @@
 from Cliente import *
 from numpy import random
 class experimento(object):
-    """description of class"""
+    """Instancia del experimento (corrida)"""
 
     clientesAProcesar=5
 
@@ -20,7 +20,7 @@ class experimento(object):
         self.clientesRechazados = 0
 
     def ejecutar(self):
-        #Llamadas a rutinas de arribo, partida, etc
+        #Llamadas a rutinas de paso de tiempo, analisis de datos, etc
         print("Ejecutado")
         while(len(self.clientesProcesados)<self.clientesAProcesar):
             self.pasoTiempo()
@@ -51,7 +51,7 @@ class experimento(object):
         nuevoCliente = Cliente(self.tiempo+random.exponential(scale=self.tasaArribo), random.exponential(scale=self.tasaPartida))
         if self.estadoServidor[self.lineaTemporal.index(self.tiempo)-1]==1: #Si el estado del servidor es ocupado en el tiempo actual
             self.estadoServidor.append(1)
-            if len(self.cola)<=self.tamanioMaxCola:  #Agregar append estado servidor
+            if len(self.cola)<=self.tamanioMaxCola:
                 self.cola.append(self.clientePorArribar)
                 self.enCola.append(len(self.cola))
             else:

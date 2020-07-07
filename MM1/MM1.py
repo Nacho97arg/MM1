@@ -1,4 +1,3 @@
-#Prueba
 from Experimento import *
 
 tamanioCola=99
