@@ -1,0 +1,19 @@
+class Cliente(object):
+    """description of class"""
+    def __init__(self, tiempoArribo, tiempoPartida):
+        self.tiempoArribo=tiempoArribo
+        self.tiempoPartida=tiempoArribo+tiempoPartida
+        self.demoraCola=0
+
+    def set_tiempoArribo(self, tiempoArribo):
+        self.tiempoArribo=tiempoArribo
+    def set_tiempoPartida(self, tiempoPartida):
+        self.tiempoPartida=tiempoPartida
+    def set_demoraCola(self, demoraCola):
+        self.demoraCola=demoraCola
+
+
+
+
+
+
