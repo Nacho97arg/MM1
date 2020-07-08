@@ -11,6 +11,7 @@ class Cliente(object):
         self.tiempoPartida=tiempoPartida
     def set_demoraCola(self, demoraCola):
         self.demoraCola=demoraCola
+        self.tiempoPartida+=self.demoraCola
 
 
 
