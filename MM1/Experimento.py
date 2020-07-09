@@ -3,9 +3,9 @@ from numpy import random
 class experimento(object):
     """Instancia del experimento (corrida)"""
 
-    clientesAProcesar=5
+    #clientesAProcesar=5
 
-    def __init__(self, tiempo, estadoServidor, tasaArribo, tasaPartida, tamanioMaxCola):
+    def __init__(self, tiempo, estadoServidor, tasaArribo, tasaPartida, tamanioMaxCola, clientesAProcesar):
         self.tiempo = 0
         self.lineaTemporal = [0]
         self.estadoServidor = [0]
@@ -18,12 +18,19 @@ class experimento(object):
         self.clientePorArribar = None
         self.clientesProcesados = []
         self.clientesRechazados = 0
+        self.clientesGenerados = 1
+        self.clientesAProcesar=clientesAProcesar
+
+
 
     def ejecutar(self): #Llamadas a rutinas de paso de tiempo, analisis de datos, etc
-        print("Ejecutado")
+        #print("Ejecutado")
         #random.seed(6666)
         while(len(self.clientesProcesados)<self.clientesAProcesar):
             self.pasoTiempo()
+        print()
+        print("Tiempo Promedio en cola", self.get_TiempoPromEnCola(),"\n", "Tiempo Promedio en sistema",self.get_TiempoPromEnSistema(),"\n", "Promedio de clientes en cola", self.get_PromClientesEnCola(),"\n", "Promedio de clientes en sistema", self.get_PromClientesEnSistema())
+        print("Utilizacion del servidor", self.get_UtilizacionServidor(),"%\n","Probabilidad n Clientes en cola", self.get_ProbNClientesCola(0),"\n","Probabilidad de Denegacion servicio",self.get_ProbDenegacionServicio())
     
     def pasoTiempo(self):
         if self.tiempo == 0:
@@ -47,20 +54,25 @@ class experimento(object):
                 self.arribo()
 
     def arribo(self):
-        nuevoCliente = Cliente(self.tiempo+random.exponential(scale=self.tasaArribo), random.exponential(scale=self.tasaPartida))
         if self.estadoServidor[self.lineaTemporal.index(self.tiempo)-1]==1: #Si el estado del servidor es ocupado en el tiempo actual
             self.estadoServidor.append(1)
-            if len(self.cola)<=self.tamanioMaxCola:
+            if len(self.cola)<self.tamanioMaxCola:
                 self.cola.append(self.clientePorArribar)
+                self.clientePorArribar = None
                 self.enCola.append(len(self.cola))
             else:
                 self.clientesRechazados+=1
+                self.enCola.append(0)
         else: #Si el servidor esta libre
             self.clientePorArribar.demoraCola=0
             self.clienteSiendoAtendido=self.clientePorArribar
+            self.clientePorArribar = None
             self.estadoServidor.append(1)
             self.enCola.append(0)
-        self.clientePorArribar=nuevoCliente
+        nuevoCliente = Cliente(self.tiempo+random.exponential(scale=self.tasaArribo), random.exponential(scale=self.tasaPartida))
+        self.clientesGenerados += 1
+        self.clientePorArribar=nuevoCliente            
+
 
     def partida(self):
         if len(self.cola) == 0: #Cola vacia, servidor pasa a idle
@@ -108,10 +120,12 @@ class experimento(object):
 
     def get_ProbNClientesCola(self, n):
         cant = self.enCola.count(n)
-        return cant/len(self.clientesProcesados)
+        return cant/len(self.enCola)
 
     def get_ProbDenegacionServicio(self):
-        return self.clientesRechazados/(self.clientesProcesados+self.clientesRechazados)
+        return self.clientesRechazados/(self.clientesGenerados-1)
+
+
 
 
 
